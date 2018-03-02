@@ -1,0 +1,15 @@
+const Container = props => {
+    return (
+        <View style={styles.container}>
+            <Title>{props.title}</Title>
+            <Button title="Go to Details" onPress={() => this.props.navigation.navigate('Settings')} />
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignSelf: 'stretch'
+    }
+});
