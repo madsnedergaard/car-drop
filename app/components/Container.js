@@ -1,7 +1,7 @@
 const Container = props => {
     return (
         <View style={styles.container}>
-            <Title>{props.title}</Title>
+            <Title h2>{props.title}</Title>
             <Button title="Go to Details" onPress={() => this.props.navigation.navigate('Settings')} />
         </View>
     );

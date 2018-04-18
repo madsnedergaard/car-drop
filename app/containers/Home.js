@@ -106,7 +106,7 @@ export default class App extends React.Component {
         console.log('render', location);
         return (
             <View style={styles.container}>
-                <Title>Hvor f* er bilen?</Title>
+                <Title h2>Hvor f* er bilen?</Title>
                 <MapView
                     style={styles.map}
                     showsUserLocation

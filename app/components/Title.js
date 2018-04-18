@@ -33,7 +33,7 @@ const Title = props => {
         );        
     } else {
         return (
-            <Text h2 style={styles.title}>
+            <Text style={styles.title}>
                 {props.children}
             </Text>
         );        
