@@ -6,8 +6,6 @@ import * as firebase from 'firebase';
 import Title from '../components/Title';
 import { colors } from '../utils';
 
-//const Home = props => {
-
 // Initialize Firebase
 var config = {
     apiKey: 'AIzaSyD4MoR58UdYhf91blKqo--X6JgfjC4rhwM',
@@ -28,15 +26,15 @@ export default class App extends React.Component {
             initialLocation: {
                 latitude: 55.687292,
                 longitude: 12.562344,
-                latitudeDelta: 0.1,
-                longitudeDelta: 0.1
+                latitudeDelta: .5,
+                longitudeDelta: .5
             },
             location: {
                 isParked: false,
                 latitude: null,
                 longitude: null,
-                latitudeDelta: DELTA,
-                longitudeDelta: DELTA
+                latitudeDelta: .2,
+                longitudeDelta: .2
             }
         };
         this.itemsRef = firebase.database().ref();
@@ -50,17 +48,6 @@ export default class App extends React.Component {
                 this.setState( updatedState );                
             }
             console.log('STATE', this.state);
-            //moveMap();
-            // get children as an array
-            // snap.forEach(child => {
-            //     console.log(child.val());
-            //     // items.push({
-            //     //     title: child.val().title,
-            //     //     _key: child.key
-            //     // });
-            //     items.push()
-            // });
-
         });
     }
     componentDidMount() {
@@ -100,6 +87,16 @@ export default class App extends React.Component {
         //     // Notify user of success
     };
 
+    _animateToCurrentLocation = () => {
+        this.getLocation((userLocation) =>
+        this._map.animateToRegion({
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005
+        }, 1000)
+    );
+    };
 
     render() {
         const { initialLocation, location } = this.state;
@@ -109,15 +106,11 @@ export default class App extends React.Component {
                 <Title h2>Hvor f* er bilen?</Title>
                 <MapView
                     style={styles.map}
+                    ref={component => {this._map = component;}}
                     showsUserLocation
                     followsUserLocation={!location.isParked}
-                    // initialRegion={{
-                    //     latitude: initialLocation.latitude,
-                    //     longitude: initialLocation.longitude,
-                    //     latitudeDelta: initialLocation.latitudeDelta,
-                    //     longitudeDelta: initialLocation.longitudeDelta
-                    // }}
-                    region={{
+                    showsMyLocationButton={false}
+                    initialRegion={{
                         latitude: location.latitude ? location.latitude : initialLocation.latitude,
                         longitude: location.longitude ? location.longitude : initialLocation.longitude,
                         latitudeDelta: location.latitudeDelta ? location.latitudeDelta : initialLocation.latitudeDelta,
@@ -132,6 +125,13 @@ export default class App extends React.Component {
                 />
                 : null}
                 </MapView>
+                <Button 
+                icon={{ name: 'my-location' }}
+                onPress={this._animateToCurrentLocation}
+                buttonStyle={styles.locationButton}
+                containerViewStyle={styles.locationButtonWrapper}
+                />
+
                 { location.isParked ? 
                 <Button
                     title="TA' BILEN"
@@ -164,7 +164,18 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 10,
         marginBottom: 10,
-        alignSelf: 'stretch'
+        alignSelf: 'stretch',
+        justifyContent: 'flex-end'
+    },
+    locationButton: {
+        paddingRight: 0,
+        backgroundColor: 'rgba(100,100,100,.3)'
+    },
+    locationButtonWrapper: {
+        width: 50,
+        marginTop: -50,
+        marginRight: 0,
+        alignSelf: 'flex-end'
     },
     cta: {
         backgroundColor: colors.primary,
