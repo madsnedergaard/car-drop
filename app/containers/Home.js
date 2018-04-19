@@ -87,15 +87,25 @@ export default class App extends React.Component {
         //     // Notify user of success
     };
 
-    _animateToCurrentLocation = () => {
-        this.getLocation((userLocation) =>
-        this._map.animateToRegion({
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005
-        }, 1000)
-    );
+    _animateToLocation = (type) => {
+        if (type === 'current') {
+            this.getLocation((userLocation) =>
+            this._map.animateToRegion({
+                latitude: userLocation.latitude,
+                longitude: userLocation.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005
+            }, 1000)
+        );            
+        } else if (type === 'car') {
+            console.log(this.state.location);
+            this._map.animateToRegion({
+                latitude: this.state.location.latitude,
+                longitude: this.state.location.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005
+            }, 1000);
+        }
     };
 
     render() {
@@ -125,11 +135,26 @@ export default class App extends React.Component {
                 />
                 : null}
                 </MapView>
+                {location.isParked ? 
                 <Button 
-                icon={{ name: 'my-location' }}
-                onPress={this._animateToCurrentLocation}
-                buttonStyle={styles.locationButton}
-                containerViewStyle={styles.locationButtonWrapper}
+                icon={<Icon
+                    name='directions-car'
+                    color='white'
+                />}
+                title=""
+                onPress={() => this._animateToLocation('car')}
+                buttonStyle={styles.carLocationButton}
+                />
+                : null
+                }
+                <Button 
+                icon={<Icon
+                    name='my-location'
+                    color='white'
+                />}
+                title=""
+                onPress={() => this._animateToLocation('current')}
+                buttonStyle={styles.myLocationButton}
                 />
 
                 { location.isParked ? 
