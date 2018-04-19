@@ -168,7 +168,11 @@ export default class App extends React.Component {
                 : 
                 <Button
                     title="SÆT BILEN HER"
-                    iconRight={{ name: 'location-on' }}
+                    icon={<Icon
+                        name='location-on'
+                        color='white'
+                    />}
+                    iconRight={true}
                     buttonStyle={styles.cta}
                     containerViewStyle={styles.ctaWrapper}
                     textStyle={styles.ctaText}
@@ -192,19 +196,33 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',
         justifyContent: 'flex-end'
     },
-    locationButton: {
+    myLocationButton: {
         paddingRight: 0,
-        backgroundColor: 'rgba(100,100,100,.3)'
-    },
-    locationButtonWrapper: {
+        backgroundColor: 'rgba(100,100,100,.3)',
         width: 50,
-        marginTop: -50,
+        marginTop: -60,
+        height: 50,
         marginRight: 0,
         alignSelf: 'flex-end'
     },
+    carLocationButton: {
+        paddingRight: 0,
+        backgroundColor: 'rgba(100,100,100,.3)',
+        width: 50,
+        marginTop: -60,
+        height: 50,
+        marginRight: 0,
+        alignSelf: 'flex-start'
+    },
+    locationButtonWrapper: {
+    },
     cta: {
         backgroundColor: colors.primary,
-        borderRadius: 30
+        borderRadius: 30,
+        alignSelf: 'stretch',
+        margin: 20,
+        marginBottom: 30,
+        padding: 10
     },
     ctaText: {
         fontFamily: 'Avenir Next',
@@ -213,8 +231,5 @@ const styles = StyleSheet.create({
         color: colors.text
     },
     ctaWrapper: {
-        alignSelf: 'stretch',
-        margin: 20,
-        marginBottom: 30
     }
 });
