@@ -18,6 +18,8 @@ class Settings extends React.Component {
     }
     
 async signup(email, password) {
+    // Disabled signup-functionality for now, 
+    // users have to manually be added through Firebase due to security
     try { 
         await firebase.auth().createUserWithEmailAndPassword(email, password);
         console.log('Account created');
@@ -31,10 +33,11 @@ async signup(email, password) {
 }
 async login(email, pass) {
     try {
+        
         await firebase.auth().signInWithEmailAndPassword(email, pass);
         console.log('Logged In!');
-        alert('Du er nu logget ind');
         this.setState({loggedIn: true});
+        this.props.navigation.navigate('Home');
         // Navigate to the Home page
     } catch (error) {
         console.log(error.toString());
@@ -54,6 +57,9 @@ async login(email, pass) {
                         <View style={styles.signupContainer}>
                             <Input
                             placeholder='Email'
+                            keyboardType='email-address'
+                            autoCapitalize='none'
+                            autoCorrect={false}
                             inputStyle={styles.input}
                             inputContainerStyle={styles.inputContainer}
                             onChangeText={(text) => this.setState({email: text})}
@@ -61,6 +67,8 @@ async login(email, pass) {
                             />
                             <Input
                             placeholder='Password'
+                            autoCapitalize='none'
+                            autoCorrect={false}
                             inputStyle={styles.input}
                             secureTextEntry={true}
                             inputContainerStyle={styles.inputContainer}
@@ -69,8 +77,6 @@ async login(email, pass) {
                             />
                         </View>
                         <Button buttonStyle={{ margin: 10, backgroundColor: colors.primary, borderRadius: 30}} title={'Login'} onPress={() => this.login(this.state.email, this.state.password)} />
-                        <Title>ELLER</Title>
-                        <Button buttonStyle={{ margin: 10, backgroundColor: colors.primary, borderRadius: 30}} title={'Signup'} onPress={() => this.signup(this.state.email, this.state.password)} />
                     </View>
                 }
             </View>
