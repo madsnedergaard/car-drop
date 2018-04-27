@@ -10,8 +10,9 @@ import { colors } from '../utils';
 class Settings extends React.Component {
     constructor(props) {
         super(props);
+        var user = firebase.auth().currentUser;
         this.state = {
-            loggedIn: false,
+            loggedIn: user ? true : false,
             email: '',
             password: ''
         }
@@ -50,7 +51,7 @@ async login(email, pass) {
             <View style={styles.container}>
                 { 
                     this.state.loggedIn ? 
-                        <Title h4>Du er logget ind</Title> 
+                        <Title h4>Du er logget ind 👌</Title> 
                     :
                     <View>
                         <Title h4>Du er ikke logget ind: </Title>
