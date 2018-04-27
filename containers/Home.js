@@ -22,7 +22,10 @@ const DELTA = 0.003;
 export default class App extends React.Component {
     constructor(props) {
         super(props);
+        var user = firebase.auth().currentUser;
         this.state = {
+            loggedIn: user ? true : false,
+            actionInProgress: false,
             initialLocation: {
                 latitude: 55.687292,
                 longitude: 12.562344,
@@ -45,9 +48,9 @@ export default class App extends React.Component {
             if (snap.val()) {
                 console.log(snap.val());
                 const updatedState = snap.val();
-                this.setState( updatedState );                
+                this.setState( {loggedIn: true, ...updatedState} );
             }
-            console.log('STATE', this.state);
+            console.log('STATE IS NOW: ', this.state);
         });
     }
     componentDidMount() {
@@ -59,7 +62,7 @@ export default class App extends React.Component {
         // TODO: Check if we have permission
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                console.log(position);
+//                console.log(position);
                 cb({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
@@ -72,7 +75,25 @@ export default class App extends React.Component {
     }
 
     onParkCar = () => {        
-        this.getLocation((userLocation => this.itemsRef.update({ location: {isParked: true, latitude: userLocation.latitude, longitude: userLocation.longitude, latitudeDelta: DELTA, longitudeDelta: DELTA} })));        
+        console.log('PARK CAR');
+        this.setState({actionInProgress: true});
+        this.getLocation(userLocation => {
+            this.itemsRef.update({ location: {isParked: true, latitude: userLocation.latitude, longitude: userLocation.longitude, latitudeDelta: DELTA, longitudeDelta: DELTA} })
+            .then(() => this.setState({actionInProgress: false}))
+            .catch(e => {
+                if (e.message === 'PERMISSION_DENIED: Permission denied') {
+                    this.setState({actionInProgress: false});
+                    this.props.navigation.navigate('Settings');
+                } else {
+                    this.setState({actionInProgress: false});
+                    alert('Ukendt fejl - prøv igen');
+                }
+            });
+        });        
+            // this.getLocation(userLocation => {
+        //     return this.itemsRef.update({ location: {isParked: true, latitude: userLocation.latitude, longitude: userLocation.longitude, latitudeDelta: DELTA, longitudeDelta: DELTA} });
+        // }
+        // );        
         //     // Get GPS location coordinates
         //     // Save to external DB somewhere (mongoLab maybe?)
         //     // long, lat, parked
@@ -80,7 +101,9 @@ export default class App extends React.Component {
     };
 
     onPickUpCar = () => {
-        this.itemsRef.update({ location: {isParked: false, latitude: null, longitude: null, latitudeDelta: DELTA, longitudeDelta: DELTA} });
+        this.setState({actionInProgress: true});
+        this.itemsRef.update({ location: {isParked: false, latitude: null, longitude: null, latitudeDelta: DELTA, longitudeDelta: DELTA} })
+        .then(() => this.setState({actionInProgress: false}));
         //     // Get GPS location coordinates
         //     // Save to external DB somewhere (mongoLab maybe?)
         //     // long, lat, parked
@@ -109,8 +132,7 @@ export default class App extends React.Component {
     };
 
     render() {
-        const { initialLocation, location } = this.state;
-        console.log('render', location);
+        const { initialLocation, location, loggedIn } = this.state;
         return (
             <View style={styles.container}>
                 <Title h2>Hvor f* er bilen?</Title>
@@ -133,7 +155,8 @@ export default class App extends React.Component {
                   title={'Le bil'}
                   description={'Her er bilen parkeret'}
                 />
-                : null}
+                : null
+                }
                 </MapView>
                 {location.isParked ? 
                 <Button 
@@ -157,27 +180,31 @@ export default class App extends React.Component {
                 buttonStyle={styles.myLocationButton}
                 />
 
-                { location.isParked ? 
-                <Button
-                    title="TA' BILEN"
-                    buttonStyle={styles.cta}
-                    containerViewStyle={styles.ctaWrapper}
-                    textStyle={styles.ctaText}
-                    onPress={this.onPickUpCar}
-                />
-                : 
-                <Button
-                    title="SÆT BILEN HER"
-                    icon={<Icon
-                        name='location-on'
-                        color='white'
-                    />}
-                    iconRight={true}
-                    buttonStyle={styles.cta}
-                    containerViewStyle={styles.ctaWrapper}
-                    textStyle={styles.ctaText}
-                    onPress={this.onParkCar}
-                />
+                { loggedIn ?
+                    location.isParked ? 
+                        <Button
+                            title="TA' BILEN"
+                            buttonStyle={styles.cta}
+                            containerViewStyle={styles.ctaWrapper}
+                            textStyle={styles.ctaText}
+                            onPress={this.onPickUpCar}
+                        />
+                    : 
+                        <Button
+                            title="SÆT BILEN HER"
+                            icon={<Icon
+                                name='location-on'
+                                color='white'
+                            />}
+                            disabled={this.state.actionInProgress}
+                            iconRight={true}
+                            buttonStyle={styles.cta}
+                            containerViewStyle={styles.ctaWrapper}
+                            textStyle={styles.ctaText}
+                            onPress={this.onParkCar}
+                        />
+                :
+                null
             }
             </View>
         );
