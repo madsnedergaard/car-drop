@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, StyleSheet, Text, View, Alert } from 'react-native';
+import { StatusBar, StyleSheet, Text, View, Alert} from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import MapView, { Marker } from 'react-native-maps';
 import * as firebase from 'firebase';
@@ -135,6 +135,9 @@ export default class App extends React.Component {
         const { initialLocation, location, loggedIn } = this.state;
         return (
             <View style={styles.container}>
+                <StatusBar
+                    barStyle="light-content"
+                />
                 <Title h2>Hvor f* er bilen?</Title>
                 <MapView
                     style={styles.map}
