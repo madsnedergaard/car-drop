@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "25.0.0"
+    "name": "CarDrop",
+    "icon": "./icon.png",
+    "version": "0.1.0",
+    "slug": "car-drop",
+    "sdkVersion": "25.0.0",
+    "ios": {
+      "bundleIdentifier": "com.madsnedergaard.cardrop"
+    },
+    "android": {
+      "package": "com.madsnedergaard.cardrop"
+    }
   }
 }
